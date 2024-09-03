@@ -1,6 +1,6 @@
-torch
-torchvision
-torchaudio
+torch==2.0.1+cu122
+torchvision==0.15.1+cu122
+torchaudio==2.0.2+cu122
 pandas
 numpy
 scikit-learn
@@ -11,5 +11,3 @@ huggingface_hub
 fair-esm==2.0.0
 fairscale==0.4.13
 fsspec
-streamlit
-Pillow
