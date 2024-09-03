@@ -1,13 +1,13 @@
 import streamlit as st
 import pandas as pd
-from io import StringIO
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 from huggingface_hub import hf_hub_download
 import subprocess
 import os
+from io import StringIO
+from PIL import Image
 
 # Display the image
-from PIL import Image
 image = Image.open('pH.png')
 st.image(image, use_column_width=True)
 
@@ -59,6 +59,7 @@ st.write("Upload your CSV file containing protein sequences:")
 uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 
 if uploaded_file:
+    # Read the uploaded file directly into a DataFrame
     df = pd.read_csv(uploaded_file)
 
     st.write("Current DataFrame columns:", df.columns.tolist())
@@ -96,6 +97,7 @@ if uploaded_file:
             st.write("OptimalpH model output:", result.stdout)
         except subprocess.CalledProcessError as e:
             st.error(f"An error occurred while running the OptimalpH model. Return code: {e.returncode}")
+            st.error(f"Error output: {e.stderr}")
 
         if os.path.exists(output_file):
             optimalpH_results = pd.read_csv(output_file)
@@ -115,6 +117,4 @@ if uploaded_file:
             df = df[final_columns]
 
         st.write("Final DataFrame with results:", df)
-        
-        # Optionally, display the DataFrame as a table in Streamlit
         st.dataframe(df)
