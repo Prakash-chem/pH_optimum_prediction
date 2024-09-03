@@ -1,0 +1,15 @@
+torch
+torchvision
+torchaudio
+pandas
+numpy
+scikit-learn
+xgboost
+biopython
+fire
+huggingface_hub
+fair-esm==2.0.0
+fairscale==0.4.13
+fsspec
+streamlit
+Pillow
