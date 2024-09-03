@@ -6,13 +6,11 @@ from huggingface_hub import hf_hub_download
 import torch
 import os
 import subprocess
+from PIL import Image
 
 # Add this line to ensure the correct Python path
 import sys
 sys.path.append('code')
-
-import streamlit as st
-from PIL import Image
 
 # Display the image
 image = Image.open('pH.png')
@@ -102,10 +100,15 @@ if uploaded_file:
         
         command = f"python3 code/predict.py --input_csv {input_file} --id_col ID --seq_col Sequence --model_fname {local_weights_paths[selected_model]} --output_csv {output_file}"
         
+        st.write(f"Running command: {command}")  # Debugging line
+        
         try:
             result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
+            st.write(result.stdout)  # Show stdout
+            st.write(result.stderr)  # Show stderr
         except subprocess.CalledProcessError as e:
             st.error(f"An error occurred while running the OptimalpH model. Return code: {e.returncode}")
+            st.error(f"Error output: {e.stderr}")
         
         # Check if the output file exists
         if os.path.exists(output_file):
@@ -120,11 +123,15 @@ if uploaded_file:
                          'Isoelectric Point', 'predict_optimal_pH', 'Lysine Count', 'Arginine Count',
                          'Cysteine Count', 'Instability Index', 'Instability Gauge', 'Hydrophobicity']
         
-        df = df[final_columns]
+        missing_columns = [col for col in final_columns if col not in df.columns]
+        if missing_columns:
+            st.error(f"Missing columns: {', '.join(missing_columns)}")
+        else:
+            df = df[final_columns]
         
-        # Save the final comprehensive results to a CSV file
-        final_output_file = 'comprehensive_protein_analysis_results.csv'
-        df.to_csv(final_output_file, index=False)
-        
-        st.success(f"Analysis complete. Results saved as '{final_output_file}'.")
-        st.download_button("Download results", data=open(final_output_file, 'rb').read(), file_name=final_output_file)
+            # Save the final comprehensive results to a CSV file
+            final_output_file = 'comprehensive_protein_analysis_results.csv'
+            df.to_csv(final_output_file, index=False)
+            
+            st.success(f"Analysis complete. Results saved as '{final_output_file}'.")
+            st.download_button("Download results", data=open(final_output_file, 'rb').read(), file_name=final_output_file)
