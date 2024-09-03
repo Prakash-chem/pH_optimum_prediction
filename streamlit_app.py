@@ -3,9 +3,8 @@ import pandas as pd
 from io import StringIO
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 from huggingface_hub import hf_hub_download
-import torch
-import os
 import subprocess
+import os
 
 # Display the image
 from PIL import Image
@@ -115,8 +114,7 @@ if uploaded_file:
         else:
             df = df[final_columns]
 
-        final_output_file = 'comprehensive_protein_analysis_results.csv'
-        df.to_csv(final_output_file, index=False)
+        st.write("Final DataFrame with results:", df)
         
-        st.success(f"Analysis complete. Results saved as '{final_output_file}'.")
-        st.download_button("Download results", data=open(final_output_file, 'rb').read(), file_name=final_output_file)
+        # Optionally, display the DataFrame as a table in Streamlit
+        st.dataframe(df)
