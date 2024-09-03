@@ -4,8 +4,16 @@ from Bio.SeqUtils.ProtParam import ProteinAnalysis
 from huggingface_hub import hf_hub_download
 import subprocess
 import os
-from io import StringIO
+import sys
 from PIL import Image
+
+# Clone the repository (if needed)
+# This step can be commented out if the repository is already included in your deployment
+if not os.path.exists('optimalpH_colab'):
+    subprocess.run(['git', 'clone', 'https://github.com/Loganz97/optimalpH_colab.git'])
+
+# Ensure the correct Python path
+sys.path.append('optimalpH_colab')
 
 # Display the image
 image = Image.open('pH.png')
@@ -59,7 +67,6 @@ st.write("Upload your CSV file containing protein sequences:")
 uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 
 if uploaded_file:
-    # Read the uploaded file directly into a DataFrame
     df = pd.read_csv(uploaded_file)
 
     st.write("Current DataFrame columns:", df.columns.tolist())
@@ -91,7 +98,7 @@ if uploaded_file:
             local_path = hf_hub_download(repo_id=model_id, filename=f"weights/{model_file}")
             local_weights_paths[model_file] = local_path
         
-        command = f"python3 code/predict.py --input_csv {input_file} --id_col ID --seq_col Sequence --model_fname {local_weights_paths[selected_model]} --output_csv {output_file}"
+        command = f"python3 optimalpH_colab/predict.py --input_csv {input_file} --id_col ID --seq_col Sequence --model_fname {local_weights_paths[selected_model]} --output_csv {output_file}"
         
         st.write(f"Running command: {command}")
         
