@@ -11,8 +11,11 @@ import subprocess
 import sys
 sys.path.append('code')
 
-# Image
-image = Image.open('pH.jpg')
+import streamlit as st
+from PIL import Image
+
+# Display the image
+image = Image.open('pH.png')
 st.image(image, use_column_width=True)
 
 # Model Selection
