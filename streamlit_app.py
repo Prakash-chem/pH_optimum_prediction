@@ -82,6 +82,7 @@ if uploaded_file:
         df[['ID', 'Sequence']].to_csv(input_file, index=False)
         output_file = 'optimalpH_results.csv'
 
+        # Download model weights
         model_id = "Loganz97/optimalpH"
         model_files = ["model_kmers", "model_knn", "model_xgboost"]
         local_weights_paths = {}
@@ -92,9 +93,13 @@ if uploaded_file:
         
         command = f"python3 code/predict.py --input_csv {input_file} --id_col ID --seq_col Sequence --model_fname {local_weights_paths[selected_model]} --output_csv {output_file}"
         
+        st.write(f"Running command: {command}")
+        
         try:
             result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
             st.write("OptimalpH model output:", result.stdout)
+            if result.stderr:
+                st.error(f"Error output: {result.stderr}")
         except subprocess.CalledProcessError as e:
             st.error(f"An error occurred while running the OptimalpH model. Return code: {e.returncode}")
             st.error(f"Error output: {e.stderr}")
