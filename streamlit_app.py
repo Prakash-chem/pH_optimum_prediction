@@ -12,7 +12,8 @@ import sys
 sys.path.append('code')
 
 # Image
-st.image('assets/dna_logo.jpg', use_column_width=True)
+image = Image.open('pH.jpg')
+st.image(image, use_column_width=True)
 
 # Model Selection
 model_selection = st.selectbox(
